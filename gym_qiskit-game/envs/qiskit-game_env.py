@@ -40,6 +40,7 @@ class QiskitGameEnv(gym.Env):
                     'Z':  300,
                     'CX': 400,
                     'CZ': 500,
+                   }
         '''
         
         self.simulator = Aer.get_backend('qasm_simulator')
@@ -47,9 +48,9 @@ class QiskitGameEnv(gym.Env):
 
         self.viewer = None
         
-        self.action_space = spaces.Discrete(3)
-        self.observation_space = spaces.Box(self.low, self.high, dtype=np.float32)
-
+        self.action_space = [self.gates, spaces.Discrete(self.qubits), spaces.Discrete(self.qubits)]
+        #first we indicate the gate, then the first qubit to which it applies, and latter the second qubit it is applied to.
+                      
         self.seed()
         
   def step(self, action):
@@ -78,7 +79,9 @@ class QiskitGameEnv(gym.Env):
       self.circuit.cz(action[1],action[2]) #apply Z to qubit action[1]
 
   def reset(self):
-  
+                      
+    self.ste_count = 0
+                      
     self.circuit = QuantumCircuit(self.qubits,self.qubits)
     
     for qubit in self.qubits:
